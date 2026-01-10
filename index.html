@@ -2185,6 +2185,102 @@ body.dark-mode .tahlil-card { background: #1F2937; border-color: #374151; }
 body.dark-mode .tahlil-count-badge { background: #78350F; color: #FCD34D; }
 /*akhir*/
 
+
+/* --- STYLE KRITIK & SARAN --- */
+.feedback-container {
+    padding: 24px;
+    flex: 1;
+    overflow-y: auto;
+    background: #F9FAFB;
+}
+
+.feedback-form {
+    background: #fff;
+    padding: 24px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 16px;
+    background: #F3F4F6;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    font-size: 14px;
+    color: var(--text-main);
+    outline: none;
+    resize: none;
+    transition: 0.3s;
+    font-family: 'plus jakarta sans', sans-serif;
+}
+
+.form-group textarea:focus {
+    background: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 4px 15px rgba(0, 152, 96, 0.1);
+}
+
+.btn-submit-feedback {
+    width: 100%;
+    padding: 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: 0.2s;
+    margin-top: 10px;
+}
+
+.btn-submit-feedback:active {
+    transform: scale(0.98);
+    background: var(--primary-dark);
+}
+
+.feedback-note {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+    padding: 0 10px;
+}
+
+.feedback-note i {
+    font-size: 20px;
+    color: var(--primary);
+}
+
+.feedback-note p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* Dark Mode Support untuk Form */
+body.dark-mode .feedback-container { background: #111827; }
+body.dark-mode .feedback-form { background: #1F2937; border-color: #374151; }
+body.dark-mode .form-group textarea { background: #374151; color: white; }
+body.dark-mode .form-group textarea:focus { background: #1F2937; border-color: var(--primary); }
+
     </style>
 </head>
 <body>
@@ -2328,6 +2424,14 @@ body.dark-mode .tahlil-count-badge { background: #78350F; color: #FCD34D; }
 
         <div class="setting-group-title">Data & Info</div>
         <div class="setting-card">
+            <div class="setting-item" onclick="openFeedback()">
+                <div class="setting-label">
+                    <i class="ri-mail-send-line" style="background:#EFF6FF; color:#3B82F6;"></i>
+                    <span>Kritik & Saran</span>
+                </div>
+                <i class="ri-arrow-right-s-line" style="color:#9CA3AF;"></i>
+            </div>
+
             <div class="setting-item" onclick="resetAppData()">
                 <div class="setting-label">
                     <i class="ri-delete-bin-line" style="background:#FEF2F2; color:#DC2626;"></i>
@@ -2335,6 +2439,7 @@ body.dark-mode .tahlil-count-badge { background: #78350F; color: #FCD34D; }
                 </div>
                 <i class="ri-arrow-right-s-line" style="color:#9CA3AF;"></i>
             </div>
+
             <div class="setting-item">
                 <div class="setting-label">
                     <i class="ri-information-line" style="background:#F3F4F6; color:#4B5563;"></i>
@@ -2408,6 +2513,39 @@ body.dark-mode .tahlil-count-badge { background: #78350F; color: #FCD34D; }
 
     <div class="content-list" id="list-tahlil" style="overflow-y: auto; padding: 20px;">
   </div>
+</div>
+
+<div id="view-feedback" class="overlay-view">
+    <div class="detail-header">
+        <div class="btn-back" onclick="closeFeedback()"><i class="ri-arrow-left-line"></i></div>
+        <div class="detail-title">
+            <h2>Kritik & Saran</h2>
+            <p>Bantu kami menjadi lebih baik</p>
+        </div>
+    </div>
+    
+    <div class="feedback-container">
+        <div class="feedback-form">
+            <div class="form-group">
+                <label>Masukan / Laporan Masalah</label>
+                <textarea id="input-masukan" placeholder="Ceritakan kendala yang Anda alami..." rows="4"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Saran Pengembangan</label>
+                <textarea id="input-saran" placeholder="Fitur apa yang ingin Anda lihat selanjutnya?" rows="4"></textarea>
+            </div>
+
+            <button class="btn-submit-feedback" onclick="sendFeedback()">
+                <i class="ri-send-plane-fill"></i> Kirimkan
+            </button>
+        </div>
+        
+        <div class="feedback-note">
+            <i class="ri-shield-check-line"></i>
+            <p>Masukan Anda akan dikirim secara anonim untuk pengembangan aplikasi.</p>
+        </div>
+    </div>
 </div>
 
 </div>
@@ -4243,6 +4381,57 @@ function closeTahlil() {
     document.getElementById('view-tahlil').classList.remove('open');
 }
 
+</script>
+
+<script>
+    //kritik dan saran
+
+    // --- LOGIKA KRITIK DAN SARAN ---
+
+function openFeedback() {
+    document.getElementById('view-feedback').classList.add('open');
+}
+
+function closeFeedback() {
+    document.getElementById('view-feedback').classList.remove('open');
+}
+
+function sendFeedback() {
+    const masukan = document.getElementById('input-masukan').value.trim();
+    const saran = document.getElementById('input-saran').value.trim();
+
+    if (!masukan && !saran) {
+        toast("Mohon isi masukan atau saran Anda");
+        return;
+    }
+
+    // Simulasi pengiriman data (Loading state)
+    const btn = document.querySelector('.btn-submit-feedback');
+    const originalText = btn.innerHTML;
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ri-loader-4-line spin"></i> Mengirim...';
+
+    setTimeout(() => {
+        // Reset Form
+        document.getElementById('input-masukan').value = '';
+        document.getElementById('input-saran').value = '';
+        
+        // Kembalikan tombol
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        
+        // Tutup view dan tampilkan pesan sukses
+        closeFeedback();
+        
+        // Tampilkan pesan sukses dengan style toast yang sudah ada
+        // Menggunakan icon check agar lebih visual
+        const successMsg = document.createElement('div');
+        successMsg.innerHTML = '<i class="ri-checkbox-circle-line" style="font-size:16px; margin-right:5px; vertical-align:middle;"></i> Terima kasih atas masukan Anda!';
+        toast(successMsg.innerText); 
+        
+    }, 1500); // Delay simulasi 1.5 detik
+}
 </script>
 </body>
 </html>

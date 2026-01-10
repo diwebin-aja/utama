@@ -2,231 +2,284 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NU Online Super App</title>
     
-    <!-- Menggunakan Tailwind CSS via CDN untuk styling cepat -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Menggunakan Lucide Icons via CDN -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Font Noto Sans & Arabic -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter (UI) & Noto Naskh Arabic (Quran) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Konfigurasi Tailwind & Custom Styles -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Noto Naskh Arabic', 'serif'],
+                    },
+                    colors: {
+                        nu: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669', // Primary Green
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
+                        'glow': '0 0 20px rgba(16, 185, 129, 0.3)'
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        body { font-family: 'Noto Sans', sans-serif; }
-        .font-arabic { font-family: 'Noto Naskh Arabic', serif; }
-        
-        /* Utility class untuk menyembunyikan view */
-        .view-section { display: none; }
-        .view-section.active { display: flex; }
-        
-        /* Animasi sederhana untuk tombol tasbih */
-        .tasbih-btn:active { transform: scale(0.95); }
-
-        /* Hide scrollbar for clean look */
+        /* Smooth Scrolling & Hide Scrollbar */
+        body { -webkit-tap-highlight-color: transparent; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Transitions */
+        .view-section { 
+            display: none; 
+            opacity: 0; 
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .view-section.active { 
+            display: flex; 
+            opacity: 1; 
+            transform: translateY(0);
+        }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .glass-dark {
+            background: rgba(6, 78, 59, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Tasbih Animation */
+        .tasbih-ring {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tasbih-btn:active .tasbih-ring { transform: scale(0.90); }
+        .tasbih-btn:active { transform: scale(0.98); }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex justify-center items-start">
+<body class="bg-gray-100 min-h-screen flex justify-center items-start text-gray-800">
 
-    <!-- Container Utama (Mobile Wrapper) -->
-    <div class="w-full max-w-md bg-gray-50 min-h-screen relative shadow-2xl overflow-hidden flex flex-col">
+    <!-- Mobile Wrapper -->
+    <div class="w-full max-w-md bg-white min-h-screen relative shadow-2xl overflow-hidden flex flex-col">
 
         <!-- ================= VIEW: HOME ================= -->
         <div id="view-home" class="view-section active flex-col pb-24 w-full">
             
-            <!-- Header & Jadwal Sholat -->
-            <header class="bg-emerald-700 text-white pt-6 pb-12 px-4 rounded-b-[2rem] shadow-lg relative overflow-hidden">
-                <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+            <!-- Hero Header -->
+            <header class="relative bg-nu-800 text-white pt-8 pb-16 px-6 rounded-b-[2.5rem] shadow-lg overflow-hidden">
+                <!-- Decorative Background -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-nu-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -mr-16 -mt-16 animate-pulse"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-yellow-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10 -ml-16 -mb-16"></div>
 
-                <div class="relative z-10 flex justify-between items-center mb-6">
-                    <div class="flex items-center space-x-2">
-                        <div class="bg-white p-1 rounded-lg">
-                            <div class="text-emerald-700 font-bold text-lg leading-none">NU</div>
+                <!-- Top Bar -->
+                <div class="relative z-10 flex justify-between items-center mb-8">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white/10 p-1.5 rounded-lg border border-white/20 backdrop-blur-sm">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_Nahdlatul_Ulama.svg/1200px-Logo_Nahdlatul_Ulama.svg.png" class="w-6 h-6 object-contain brightness-0 invert" alt="Logo">
                         </div>
                         <div>
-                            <h1 class="font-bold text-lg leading-none">NU Online</h1>
-                            <p class="text-xs text-emerald-100">Super App</p>
+                            <h1 class="font-bold text-lg leading-tight tracking-tight">NU Online</h1>
+                            <p class="text-[10px] text-nu-100 uppercase tracking-widest opacity-80">Super App</p>
                         </div>
                     </div>
-                    <div class="flex space-x-3">
-                        <i data-lucide="search" class="w-5 h-5"></i>
-                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    <div class="flex gap-4">
+                        <button class="bg-white/10 p-2 rounded-full hover:bg-white/20 transition"><i data-lucide="search" class="w-5 h-5"></i></button>
+                        <button class="bg-white/10 p-2 rounded-full hover:bg-white/20 transition"><i data-lucide="bell" class="w-5 h-5"></i></button>
                     </div>
                 </div>
 
-                <!-- Widget Jadwal -->
-                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                    <div class="flex justify-between items-end mb-2">
+                <!-- Prayer Widget (Glassmorphism) -->
+                <div class="relative z-10 glass-dark rounded-2xl p-5 shadow-2xl transform transition hover:scale-[1.01]">
+                    <div class="flex justify-between items-start mb-4">
                         <div>
-                            <p class="text-xs text-emerald-100 mb-1">Menuju Ashar</p>
-                            <h2 id="clock-display" class="text-3xl font-bold">--:--:--</h2>
+                            <p class="text-xs font-medium text-emerald-200 mb-1 flex items-center gap-1">
+                                <i data-lucide="map-pin" class="w-3 h-3"></i> <span id="location-name">Jakarta Pusat</span>
+                            </p>
+                            <h2 id="next-prayer-name" class="text-sm text-white opacity-80">Memuat...</h2>
+                            <div class="flex items-baseline gap-2">
+                                <h1 id="countdown-timer" class="text-4xl font-bold tracking-tight">--:--</h1>
+                                <span class="text-xs text-emerald-200">Menuju Waktu Sholat</span>
+                            </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-medium">Jakarta Selatan</p>
-                            <p class="text-xs text-emerald-200">12 Rojab 1446 H</p>
+                            <div class="bg-white/10 px-3 py-1 rounded-lg border border-white/10">
+                                <p class="text-xs font-bold text-white" id="hijri-date">Loading...</p>
+                            </div>
                         </div>
                     </div>
-                    <!-- Progress Bar -->
-                    <div class="h-1 w-full bg-emerald-900/30 rounded-full overflow-hidden mb-3">
-                        <div class="h-full bg-yellow-400 w-2/3"></div>
-                    </div>
-                    <!-- Jadwal Mini -->
-                    <div class="flex justify-between text-xs text-emerald-100" id="prayer-mini-list">
-                        <!-- Diisi oleh JS -->
+
+                    <!-- Prayer Grid Mini -->
+                    <div class="grid grid-cols-5 gap-2 pt-4 border-t border-white/10" id="prayer-mini-grid">
+                        <!-- Skeleton Loader -->
+                        <div class="col-span-5 h-8 skeleton rounded opacity-20"></div>
                     </div>
                 </div>
             </header>
 
-            <!-- Main Menu Grid -->
-            <div class="px-4 -mt-6 relative z-20">
-                <div class="bg-white rounded-2xl shadow-md p-4 grid grid-cols-4 gap-4">
-                    <!-- Menu Items -->
-                    <div onclick="switchView('view-quran')" class="flex flex-col items-center gap-2 cursor-pointer group">
-                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition">
-                            <i data-lucide="book-open" class="text-emerald-600 w-6 h-6"></i>
-                        </div>
-                        <span class="text-[10px] text-center font-medium text-gray-700">Al-Qur'an</span>
-                    </div>
-
-                    <div class="flex flex-col items-center gap-2 cursor-pointer group">
-                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition">
-                            <i data-lucide="heart" class="text-emerald-600 w-6 h-6"></i>
-                        </div>
-                        <span class="text-[10px] text-center font-medium text-gray-700">Yasin</span>
-                    </div>
-
-                    <div class="flex flex-col items-center gap-2 cursor-pointer group">
-                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition">
-                            <i data-lucide="clock" class="text-emerald-600 w-6 h-6"></i>
-                        </div>
-                        <span class="text-[10px] text-center font-medium text-gray-700">Jadwal</span>
-                    </div>
-
-                    <div class="flex flex-col items-center gap-2 cursor-pointer group">
-                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition">
-                            <i data-lucide="compass" class="text-emerald-600 w-6 h-6"></i>
-                        </div>
-                        <span class="text-[10px] text-center font-medium text-gray-700">Kiblat</span>
-                    </div>
-                    
-                    <div class="flex flex-col items-center gap-2 cursor-pointer group">
-                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition">
-                            <i data-lucide="moon" class="text-emerald-600 w-6 h-6"></i>
-                        </div>
-                        <span class="text-[10px] text-center font-medium text-gray-700">Maulid</span>
-                    </div>
-
-                    <div onclick="switchView('view-tasbih')" class="flex flex-col items-center gap-2 cursor-pointer group">
-                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition">
-                            <i data-lucide="rotate-ccw" class="text-emerald-600 w-6 h-6"></i>
-                        </div>
-                        <span class="text-[10px] text-center font-medium text-gray-700">Tasbih</span>
-                    </div>
-                    
-                    <div class="flex flex-col items-center gap-2 cursor-pointer group">
-                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition">
-                            <i data-lucide="map-pin" class="text-emerald-600 w-6 h-6"></i>
-                        </div>
-                        <span class="text-[10px] text-center font-medium text-gray-700">Ziarah</span>
-                    </div>
-
-                    <div class="flex flex-col items-center gap-2 cursor-pointer group">
-                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition">
-                            <i data-lucide="more-horizontal" class="text-gray-400 w-6 h-6"></i>
-                        </div>
-                        <span class="text-[10px] text-center font-medium text-gray-700">Lainnya</span>
+            <!-- Menu Grid (Floating) -->
+            <div class="px-5 -mt-8 relative z-20">
+                <div class="bg-white rounded-2xl shadow-soft p-5">
+                    <div class="grid grid-cols-4 gap-y-6 gap-x-2">
+                        <!-- Items rendered by JS -->
+                        <div id="menu-grid-container" class="contents"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Banner Donasi -->
-            <div class="mt-6 px-4">
-                <div class="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl p-4 text-white flex justify-between items-center shadow-md">
-                    <div>
-                        <h3 class="font-bold text-lg">Koin NU</h3>
-                        <p class="text-xs text-yellow-100">Gerakan kemandirian umat</p>
+            <!-- Content Area -->
+            <div class="mt-6 px-5 space-y-8">
+                
+                <!-- Banner Donasi -->
+                <div class="relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-r from-orange-500 to-yellow-500"></div>
+                    <div class="relative p-5 flex justify-between items-center">
+                        <div class="text-white">
+                            <h3 class="font-bold text-lg">Koin NU</h3>
+                            <p class="text-xs text-white/90 mt-1">Bantu kemandirian umat bersama.</p>
+                        </div>
+                        <button class="bg-white text-orange-600 px-5 py-2 rounded-full text-xs font-bold shadow-md transform group-hover:scale-105 transition">
+                            Donasi
+                        </button>
                     </div>
-                    <button class="bg-white text-orange-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm active:bg-gray-100">
-                        Donasi
-                    </button>
+                    <!-- decorative circle -->
+                    <div class="absolute -right-4 -bottom-8 w-24 h-24 bg-white opacity-10 rounded-full"></div>
                 </div>
-            </div>
 
-            <!-- List Berita -->
-            <div class="mt-6 px-4 pb-4">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="font-bold text-gray-800 text-lg border-l-4 border-emerald-600 pl-3">Berita Terkini</h2>
-                    <a href="#" class="text-xs text-emerald-600 font-bold flex items-center">Lihat Semua <i data-lucide="chevron-right" class="w-3 h-3 ml-1"></i></a>
-                </div>
-                <div id="article-list" class="space-y-4">
-                    <!-- Diisi oleh JS -->
+                <!-- Berita Section -->
+                <div>
+                    <div class="flex justify-between items-end mb-4">
+                        <div>
+                            <h2 class="font-bold text-gray-800 text-xl">Berita Terkini</h2>
+                            <div class="h-1 w-12 bg-nu-600 rounded-full mt-1"></div>
+                        </div>
+                        <a href="#" class="text-xs font-bold text-nu-600 flex items-center hover:underline">
+                            Lihat Semua <i data-lucide="chevron-right" class="w-3 h-3 ml-1"></i>
+                        </a>
+                    </div>
+                    <div id="article-list" class="space-y-4">
+                        <!-- Skeletons -->
+                        <div class="h-24 bg-gray-100 rounded-xl skeleton"></div>
+                        <div class="h-24 bg-gray-100 rounded-xl skeleton"></div>
+                    </div>
                 </div>
             </div>
             
             <!-- Bottom Navigation -->
-            <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-gray-200 px-6 py-2 flex justify-between items-center z-50 h-[70px]">
-                <div class="flex flex-col items-center cursor-pointer text-emerald-600">
-                    <i data-lucide="home" class="w-5 h-5"></i>
-                    <span class="text-[10px] mt-1 font-medium">Beranda</span>
+            <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/90 backdrop-blur-lg border-t border-gray-100 px-6 pb-6 pt-3 flex justify-between items-center z-50">
+                <button class="flex flex-col items-center text-nu-600 transition-colors">
+                    <i data-lucide="home" class="w-6 h-6"></i>
+                    <span class="text-[10px] font-medium mt-1">Beranda</span>
+                </button>
+                <button class="flex flex-col items-center text-gray-400 hover:text-nu-600 transition-colors">
+                    <i data-lucide="compass" class="w-6 h-6"></i>
+                    <span class="text-[10px] font-medium mt-1">Kiblat</span>
+                </button>
+                
+                <!-- Floating Action Button -->
+                <div class="relative -top-8">
+                    <button onclick="switchView('view-quran')" class="bg-gradient-to-b from-nu-500 to-nu-700 rounded-full p-4 shadow-glow border-4 border-white transform active:scale-95 transition">
+                         <i data-lucide="book-open" class="text-white w-7 h-7"></i>
+                    </button>
                 </div>
-                <div class="flex flex-col items-center cursor-pointer text-gray-400 hover:text-emerald-600">
-                    <i data-lucide="clock" class="w-5 h-5"></i>
-                    <span class="text-[10px] mt-1 font-medium">Jadwal</span>
-                </div>
-                <!-- Center Floating Icon -->
-                <div class="relative -top-6">
-                    <div class="bg-emerald-600 rounded-full p-4 shadow-lg border-4 border-gray-100 cursor-pointer">
-                         <i data-lucide="book-open" class="text-white w-6 h-6"></i>
-                    </div>
-                </div>
-                <div class="flex flex-col items-center cursor-pointer text-gray-400 hover:text-emerald-600">
-                    <i data-lucide="file-text" class="w-5 h-5"></i>
-                    <span class="text-[10px] mt-1 font-medium">Artikel</span>
-                </div>
-                <div class="flex flex-col items-center cursor-pointer text-gray-400 hover:text-emerald-600">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                    <span class="text-[10px] mt-1 font-medium">Lainnya</span>
-                </div>
+
+                <button class="flex flex-col items-center text-gray-400 hover:text-nu-600 transition-colors">
+                    <i data-lucide="calendar" class="w-6 h-6"></i>
+                    <span class="text-[10px] font-medium mt-1">Jadwal</span>
+                </button>
+                <button class="flex flex-col items-center text-gray-400 hover:text-nu-600 transition-colors">
+                    <i data-lucide="user" class="w-6 h-6"></i>
+                    <span class="text-[10px] font-medium mt-1">Akun</span>
+                </button>
             </nav>
         </div>
 
-        <!-- ================= VIEW: TASBIH DIGITAL ================= -->
-        <div id="view-tasbih" class="view-section flex-col h-screen bg-emerald-50 w-full hidden">
-            <div class="bg-emerald-700 text-white p-4 flex items-center shadow-md">
-                <button onclick="switchView('view-home')"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
-                <h2 class="ml-4 text-lg font-bold">Tasbih Digital</h2>
+        <!-- ================= VIEW: TASBIH (Maximized Design) ================= -->
+        <div id="view-tasbih" class="view-section flex-col h-screen bg-nu-50 w-full hidden">
+            <!-- Header -->
+            <div class="bg-white/80 backdrop-blur-md px-4 py-4 flex items-center justify-between sticky top-0 z-20 border-b border-gray-100">
+                <button onclick="switchView('view-home')" class="p-2 hover:bg-gray-100 rounded-full transition"><i data-lucide="arrow-left" class="w-6 h-6 text-gray-700"></i></button>
+                <h2 class="text-lg font-bold text-gray-800">Tasbih Digital</h2>
+                <button id="btn-tasbih-reset" class="p-2 hover:bg-gray-100 rounded-full transition text-gray-500"><i data-lucide="rotate-ccw" class="w-5 h-5"></i></button>
             </div>
-            <div class="flex-1 flex flex-col items-center justify-center p-6 pb-20">
-                <div class="bg-white rounded-full h-64 w-64 flex items-center justify-center shadow-2xl border-8 border-emerald-100 mb-8 relative">
-                    <div class="text-center">
-                        <span class="block text-gray-500 text-sm mb-2">Target: 33</span>
-                        <span id="tasbih-count" class="text-7xl font-bold text-emerald-600">0</span>
-                    </div>
+
+            <div class="flex-1 flex flex-col items-center justify-center p-8 relative overflow-hidden">
+                <!-- Background Decoration -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+                     <i data-lucide="flower-2" class="w-96 h-96 text-nu-600"></i>
                 </div>
-                
-                <button id="btn-tasbih-count" class="tasbih-btn w-full bg-emerald-600 text-white py-6 rounded-2xl text-xl font-bold shadow-lg transition select-none">
+
+                <!-- Main Counter Ring -->
+                <div class="relative mb-12">
+                    <div class="w-64 h-64 rounded-full border-[12px] border-white shadow-soft bg-white flex items-center justify-center relative z-10 tasbih-ring">
+                        <div class="text-center">
+                            <span class="text-sm text-gray-400 font-medium uppercase tracking-wider">Total Dzikir</span>
+                            <div id="tasbih-count" class="text-7xl font-bold text-nu-600 tabular-nums leading-none mt-2">0</div>
+                            <span class="text-xs text-nu-400 mt-2 block bg-nu-50 px-2 py-1 rounded-full">Target: 33</span>
+                        </div>
+                    </div>
+                    <!-- Outer Glow -->
+                    <div class="absolute inset-0 rounded-full bg-nu-400 opacity-20 blur-2xl animate-pulse"></div>
+                </div>
+
+                <!-- Interaction Area -->
+                <button id="btn-tasbih-count" class="tasbih-btn w-full max-w-xs bg-gradient-to-r from-nu-600 to-nu-500 text-white py-5 rounded-2xl shadow-glow text-xl font-bold tracking-wide flex items-center justify-center gap-2">
+                    <i data-lucide="fingerprint" class="w-6 h-6"></i>
                     TEKAN
                 </button>
-                
-                <button id="btn-tasbih-reset" class="mt-6 flex items-center text-gray-500 hover:text-emerald-600">
-                    <i data-lucide="rotate-ccw" class="w-4 h-4 mr-2"></i> Reset
-                </button>
+                <p class="mt-6 text-sm text-gray-400 text-center">Tekan tombol di atas atau area manapun untuk bertasbih</p>
             </div>
         </div>
 
-        <!-- ================= VIEW: AL-QURAN ================= -->
-        <div id="view-quran" class="view-section flex-col h-screen bg-gray-50 w-full hidden">
-            <div class="bg-emerald-700 text-white p-4 flex items-center shadow-md sticky top-0 z-10">
-                <button onclick="switchView('view-home')"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
-                <h2 class="ml-4 text-lg font-bold">Al-Qur'an</h2>
-                <div class="ml-auto"><i data-lucide="search" class="w-5 h-5"></i></div>
+        <!-- ================= VIEW: AL-QURAN (Clean List) ================= -->
+        <div id="view-quran" class="view-section flex-col h-screen bg-white w-full hidden">
+            <div class="bg-white/90 backdrop-blur-md px-4 py-4 flex items-center shadow-sm sticky top-0 z-20 border-b border-gray-100">
+                <button onclick="switchView('view-home')" class="p-2 -ml-2 hover:bg-gray-100 rounded-full transition"><i data-lucide="arrow-left" class="w-6 h-6 text-gray-700"></i></button>
+                <div class="ml-2 flex-1">
+                    <h2 class="text-lg font-bold text-gray-800">Al-Qur'an</h2>
+                    <p class="text-xs text-gray-500">Terakhir dibaca: Al-Kahfi</p>
+                </div>
+                <button class="p-2 hover:bg-gray-100 rounded-full"><i data-lucide="search" class="w-5 h-5 text-gray-600"></i></button>
             </div>
-            <div id="quran-list" class="p-4 space-y-3 overflow-y-auto pb-24 no-scrollbar">
-                <!-- Diisi oleh JS -->
+            
+            <div id="quran-list" class="flex-1 overflow-y-auto pb-6 no-scrollbar">
+                <!-- Content via JS -->
             </div>
         </div>
 
@@ -234,132 +287,272 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // --- 1. DATA MOCKUP ---
-        const PRAYER_TIMES = {
-            Imsak: "04:08", Subuh: "04:18", Terbit: "05:35", Dhuha: "05:58",
-            Dzuhur: "11:51", Ashar: "15:13", Maghrib: "18:02", Isya: "19:15"
+        // --- CONFIGURATION ---
+        // Menggunakan API Aladhan untuk data Kemenag (Method 20)
+        const API_URL = "https://api.aladhan.com/v1/timingsByCity?city=Jakarta&country=Indonesia&method=20";
+        
+        // --- STATE MANAGEMENT ---
+        let appData = {
+            prayerTimes: null,
+            hijriDate: null,
+            nextPrayer: null,
+            tasbihCount: 0
         };
 
-        const SURAH_LIST = [
-            { number: 1, name: "Al-Fatihah", meaning: "Pembukaan", ayat: 7 },
-            { number: 2, name: "Al-Baqarah", meaning: "Sapi Betina", ayat: 286 },
-            { number: 3, name: "Ali 'Imran", meaning: "Keluarga Imran", ayat: 200 },
-            { number: 4, name: "An-Nisa'", meaning: "Wanita", ayat: 176 },
-            { number: 36, name: "Ya Sin", meaning: "Ya Sin", ayat: 83 },
-            { number: 67, name: "Al-Mulk", meaning: "Kerajaan", ayat: 30 },
-            { number: 18, name: "Al-Kahfi", meaning: "Gua", ayat: 110 },
+        // --- MENU DATA ---
+        const MENU_ITEMS = [
+            { id: 'quran', label: "Al-Qur'an", icon: 'book-open', color: 'text-nu-600', bg: 'bg-nu-50', action: "switchView('view-quran')" },
+            { id: 'yasin', label: 'Yasin', icon: 'heart', color: 'text-nu-600', bg: 'bg-nu-50' },
+            { id: 'tahlil', label: 'Tahlil', icon: 'users', color: 'text-nu-600', bg: 'bg-nu-50' },
+            { id: 'maulid', label: 'Maulid', icon: 'moon', color: 'text-nu-600', bg: 'bg-nu-50' },
+            { id: 'tasbih', label: 'Tasbih', icon: 'rotate-ccw', color: 'text-nu-600', bg: 'bg-nu-50', action: "switchView('view-tasbih')" },
+            { id: 'ziarah', label: 'Ziarah', icon: 'map-pin', color: 'text-nu-600', bg: 'bg-nu-50' },
+            { id: 'zakat', label: 'Zakat', icon: 'wallet', color: 'text-nu-600', bg: 'bg-nu-50' },
+            { id: 'lain', label: 'Lainnya', icon: 'grid', color: 'text-gray-400', bg: 'bg-gray-50' },
         ];
 
+        // --- MOCK ARTICLES ---
         const ARTICLES = [
-            { id: 1, cat: "Nasional", title: "PBNU Gelar Peringatan Hari Santri Nasional 2024", img: "https://placehold.co/600x400/047857/ffffff?text=Hari+Santri", date: "2 Jam yang lalu" },
-            { id: 2, cat: "Syariah", title: "Hukum Membaca Doa Qunut Saat Sholat Subuh", img: "https://placehold.co/600x400/047857/ffffff?text=Fiqih", date: "4 Jam yang lalu" },
-            { id: 3, cat: "Ubudiyah", title: "Tata Cara Ziarah Kubur Sesuai Sunnah", img: "https://placehold.co/600x400/047857/ffffff?text=Ziarah", date: "1 Hari yang lalu" }
+            { cat: "Nasional", title: "PBNU Ajak Masyarakat Jaga Kondusivitas Jelang Pemilu", img: "https://placehold.co/600x400/047857/ffffff?text=PBNU+News", date: "Baru saja" },
+            { cat: "Hikmah", title: "Keutamaan Bulan Rajab dan Amalan yang Dianjurkan", img: "https://placehold.co/600x400/059669/ffffff?text=Rajab", date: "1 Jam lalu" },
+            { cat: "Bahtsul Masail", title: "Hukum Penggunaan AI dalam Perspektif Fiqih", img: "https://placehold.co/600x400/064e3b/ffffff?text=Fiqih+AI", date: "3 Jam lalu" },
         ];
 
-        // --- 2. FUNGSI VIEW & NAVIGASI ---
-        function switchView(viewId) {
-            // Sembunyikan semua section
-            document.querySelectorAll('.view-section').forEach(el => {
-                el.classList.remove('active');
-                el.classList.add('hidden');
-            });
-            // Tampilkan section yang dipilih
-            const target = document.getElementById(viewId);
-            target.classList.remove('hidden');
-            target.classList.add('active');
-            
-            // Re-render icons jika perlu (kadang diperlukan saat elemen muncul dari hidden)
+        const SURAH_DATA = [
+            { num: 1, name: "Al-Fatihah", mean: "Pembukaan", type: "Makkiyah", ayat: 7 },
+            { num: 2, name: "Al-Baqarah", mean: "Sapi Betina", type: "Madaniyah", ayat: 286 },
+            { num: 36, name: "Ya Sin", mean: "Ya Sin", type: "Makkiyah", ayat: 83 },
+            { num: 18, name: "Al-Kahfi", mean: "Gua", type: "Makkiyah", ayat: 110 },
+            { num: 56, name: "Al-Waqi'ah", mean: "Hari Kiamat", type: "Makkiyah", ayat: 96 },
+            { num: 67, name: "Al-Mulk", mean: "Kerajaan", type: "Makkiyah", ayat: 30 },
+            { num: 1, name: "Al-Fatihah", mean: "Pembukaan", type: "Makkiyah", ayat: 7 },
+            { num: 2, name: "Al-Baqarah", mean: "Sapi Betina", type: "Madaniyah", ayat: 286 },
+            { num: 36, name: "Ya Sin", mean: "Ya Sin", type: "Makkiyah", ayat: 83 },
+            { num: 18, name: "Al-Kahfi", mean: "Gua", type: "Makkiyah", ayat: 110 },
+            { num: 56, name: "Al-Waqi'ah", mean: "Hari Kiamat", type: "Makkiyah", ayat: 96 },
+            { num: 67, name: "Al-Mulk", mean: "Kerajaan", type: "Makkiyah", ayat: 30 },
+        ];
+
+        // --- CORE FUNCTIONS ---
+
+        async function initApp() {
             lucide.createIcons();
+            renderMenu();
+            renderArticles();
+            renderQuran();
+            setupTasbih();
             
-            // Scroll ke atas
-            window.scrollTo(0,0);
+            try {
+                await fetchPrayerTimes();
+                startClock();
+            } catch (e) {
+                console.error("Failed to load prayer times", e);
+                document.getElementById('next-prayer-name').innerText = "Gagal memuat jadwal";
+            }
         }
 
-        // --- 3. FUNGSI RENDER KONTEN ---
-        function renderContent() {
-            // Render Jadwal Mini di Header
-            const prayerContainer = document.getElementById('prayer-mini-list');
-            const relevantPrayers = ['Imsak', 'Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya'];
+        async function fetchPrayerTimes() {
+            const today = new Date();
+            // Format tanggal DD-MM-YYYY untuk API jika perlu, tapi endpoint timingsByCity otomatis hari ini
+            const res = await fetch(API_URL);
+            const data = await res.json();
             
-            prayerContainer.innerHTML = relevantPrayers.slice(0, 4).map(key => `
-                <div class="flex flex-col items-center">
-                    <span class="${key === 'Dzuhur' ? 'font-bold text-white' : ''}">${key}</span>
-                    <span>${PRAYER_TIMES[key]}</span>
+            if(data.code === 200) {
+                const timings = data.data.timings;
+                const hijri = data.data.date.hijri;
+                
+                appData.prayerTimes = {
+                    Subuh: timings.Fajr,
+                    Dzuhur: timings.Dhuhr,
+                    Ashar: timings.Asr,
+                    Maghrib: timings.Maghrib,
+                    Isya: timings.Isha
+                };
+
+                // Update UI Date
+                document.getElementById('hijri-date').innerText = `${hijri.day} ${hijri.month.en} ${hijri.year}`;
+                
+                renderPrayerGrid();
+                calculateNextPrayer();
+            }
+        }
+
+        function calculateNextPrayer() {
+            if(!appData.prayerTimes) return;
+            
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            let nextPrayerName = "Subuh";
+            let nextPrayerTimeStr = appData.prayerTimes.Subuh;
+            let found = false;
+
+            const timeToMinutes = (timeStr) => {
+                const [h, m] = timeStr.split(':').map(Number);
+                return h * 60 + m;
+            };
+
+            for (const [name, time] of Object.entries(appData.prayerTimes)) {
+                const prayerMinutes = timeToMinutes(time);
+                if (prayerMinutes > currentMinutes) {
+                    nextPrayerName = name;
+                    nextPrayerTimeStr = time;
+                    found = true;
+                    break;
+                }
+            }
+            
+            // Jika tidak ada jadwal tersisa hari ini, berarti Subuh besok
+            if (!found) {
+                nextPrayerName = "Subuh";
+                nextPrayerTimeStr = appData.prayerTimes.Subuh; // Logic sederhana, idealnya ambil jadwal besok
+            }
+
+            appData.nextPrayer = { name: nextPrayerName, time: nextPrayerTimeStr };
+            
+            document.getElementById('next-prayer-name').innerHTML = `Menuju <span class="font-bold text-white">${nextPrayerName}</span> (${nextPrayerTimeStr})`;
+        }
+
+        function startClock() {
+            setInterval(() => {
+                if(!appData.nextPrayer) return;
+
+                const now = new Date();
+                const [targetH, targetM] = appData.nextPrayer.time.split(':').map(Number);
+                
+                let targetDate = new Date();
+                targetDate.setHours(targetH, targetM, 0);
+
+                // Jika target jam lebih kecil dari sekarang, berarti besok
+                if (targetDate < now) {
+                    targetDate.setDate(targetDate.getDate() + 1);
+                }
+
+                const diff = targetDate - now;
+                
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('countdown-timer').innerText = 
+                    `-${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            }, 1000);
+        }
+
+        // --- RENDERING UI ---
+
+        function renderMenu() {
+            const container = document.getElementById('menu-grid-container');
+            container.innerHTML = MENU_ITEMS.map(item => `
+                <div onclick="${item.action || ''}" class="flex flex-col items-center gap-2 cursor-pointer group active:scale-95 transition-transform duration-200">
+                    <div class="w-14 h-14 ${item.bg} rounded-2xl flex items-center justify-center shadow-sm border border-gray-100 group-hover:shadow-md transition-all">
+                        <i data-lucide="${item.icon}" class="${item.color} w-6 h-6"></i>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-600 text-center leading-tight">${item.label}</span>
                 </div>
             `).join('');
+        }
 
-            // Render Artikel
-            const articleContainer = document.getElementById('article-list');
-            articleContainer.innerHTML = ARTICLES.map(art => `
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex h-28 cursor-pointer">
-                    <img src="${art.img}" alt="News" class="w-28 h-full object-cover">
-                    <div class="p-3 flex flex-col justify-between flex-1">
+        function renderPrayerGrid() {
+            const container = document.getElementById('prayer-mini-grid');
+            container.innerHTML = Object.entries(appData.prayerTimes).map(([name, time]) => `
+                <div class="flex flex-col items-center p-1 rounded-lg ${name === appData.nextPrayer?.name ? 'bg-white/20' : ''}">
+                    <span class="text-[10px] text-emerald-200 mb-1">${name}</span>
+                    <span class="text-xs font-bold text-white">${time}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderArticles() {
+            const container = document.getElementById('article-list');
+            container.innerHTML = ARTICLES.map(art => `
+                <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex gap-3 active:bg-gray-50 transition cursor-pointer">
+                    <img src="${art.img}" class="w-24 h-24 object-cover rounded-lg flex-shrink-0 bg-gray-200" alt="img">
+                    <div class="flex flex-col justify-between py-1">
                         <div>
-                            <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mb-1 inline-block">${art.cat}</span>
-                            <h3 class="text-sm font-bold text-gray-800 line-clamp-2 leading-snug">${art.title}</h3>
+                            <span class="text-[10px] font-bold text-nu-600 uppercase tracking-wide bg-nu-50 px-2 py-0.5 rounded-md">${art.cat}</span>
+                            <h3 class="font-bold text-sm text-gray-800 leading-snug mt-1.5 line-clamp-2">${art.title}</h3>
                         </div>
-                        <div class="flex justify-between items-center mt-2">
-                            <span class="text-[10px] text-gray-400">${art.date}</span>
-                            <i data-lucide="share-2" class="w-3 h-3 text-gray-400"></i>
-                        </div>
+                        <span class="text-[10px] text-gray-400 font-medium">${art.date}</span>
                     </div>
                 </div>
             `).join('');
+        }
 
-            // Render List Al-Quran
-            const quranContainer = document.getElementById('quran-list');
-            quranContainer.innerHTML = SURAH_LIST.map(surah => `
-                <div class="bg-white p-4 rounded-xl shadow-sm flex items-center border border-gray-100 hover:bg-emerald-50 cursor-pointer transition">
-                    <div class="h-10 w-10 relative flex items-center justify-center mr-4">
-                        <div class="absolute inset-0 border-2 border-emerald-200 rotate-45 rounded-sm"></div>
-                        <span class="relative font-bold text-emerald-700 text-sm">${surah.number}</span>
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="font-bold text-gray-800">${surah.name}</h3>
-                        <p class="text-xs text-gray-500">${surah.meaning} • ${surah.ayat} Ayat</p>
+        function renderQuran() {
+            const container = document.getElementById('quran-list');
+            container.innerHTML = SURAH_DATA.map(surah => `
+                <div class="px-5 py-4 border-b border-gray-50 hover:bg-gray-50 transition flex items-center justify-between cursor-pointer group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center font-bold text-nu-700 text-sm font-sans group-hover:bg-nu-600 group-hover:text-white transition">
+                            ${surah.num}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 text-base">${surah.name}</h4>
+                            <p class="text-xs text-gray-400 mt-0.5">${surah.mean} • ${surah.ayat} Ayat</p>
+                        </div>
                     </div>
                     <div class="text-right">
-                        <span class="text-xl font-arabic text-gray-800">Start</span> 
+                         <span class="text-xl font-arabic text-gray-800 leading-none">...</span>
                     </div>
                 </div>
             `).join('');
+        }
+
+        // --- TASBIH LOGIC ---
+        function setupTasbih() {
+            const btn = document.getElementById('btn-tasbih-count');
+            const reset = document.getElementById('btn-tasbih-reset');
+            const display = document.getElementById('tasbih-count');
+
+            const increment = () => {
+                appData.tasbihCount++;
+                display.innerText = appData.tasbihCount;
+                display.classList.remove('scale-150');
+                void display.offsetWidth; // trigger reflow
+                display.classList.add('scale-150', 'transition', 'duration-100');
+                setTimeout(() => display.classList.remove('scale-150'), 100);
+                
+                if (navigator.vibrate) navigator.vibrate(40); // Haptic
+            };
+
+            btn.addEventListener('click', increment);
+            // Klik area kosong di tasbih view juga trigger (UX convenience)
+            document.getElementById('view-tasbih').addEventListener('click', (e) => {
+                if(e.target === document.getElementById('view-tasbih') || e.target.closest('.tasbih-ring')) {
+                    increment();
+                }
+            });
+
+            reset.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if(confirm("Mulai ulang dzikir?")) {
+                    appData.tasbihCount = 0;
+                    display.innerText = 0;
+                }
+            });
+        }
+
+        // --- NAVIGATION ---
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.remove('active');
+                setTimeout(() => el.classList.remove('flex'), 300); // Wait for transition
+            });
+
+            const target = document.getElementById(viewId);
+            target.style.display = 'flex';
+            // Force reflow
+            void target.offsetWidth;
+            target.classList.add('active');
             
-            // Inisialisasi Icon
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Re-init icons just in case
             lucide.createIcons();
         }
 
-        // --- 4. LOGIKA TASBIH ---
-        let tasbihCount = 0;
-        const displayCount = document.getElementById('tasbih-count');
-        const btnCount = document.getElementById('btn-tasbih-count');
-        const btnReset = document.getElementById('btn-tasbih-reset');
-
-        btnCount.addEventListener('click', () => {
-            tasbihCount++;
-            displayCount.textContent = tasbihCount;
-            // Getar HP jika didukung (haptic feedback)
-            if (navigator.vibrate) navigator.vibrate(30);
-        });
-
-        btnReset.addEventListener('click', () => {
-            if(confirm('Reset hitungan?')) {
-                tasbihCount = 0;
-                displayCount.textContent = 0;
-            }
-        });
-
-        // --- 5. LOGIKA JAM ---
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock-display').textContent = now.toLocaleTimeString('id-ID');
-        }
-
-        // --- INIT ---
-        document.addEventListener('DOMContentLoaded', () => {
-            renderContent();
-            setInterval(updateClock, 1000);
-            updateClock();
-        });
+        // Initialize
+        document.addEventListener('DOMContentLoaded', initApp);
 
     </script>
 </body>
